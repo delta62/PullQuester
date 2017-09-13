@@ -1,27 +1,16 @@
 [![Build Status](https://travis-ci.org/daptiv/PullQuester.svg?branch=travis)](https://travis-ci.org/daptiv/PullQuester)
-PullQuester
-===========
 
-pull request tool for generating pull requests on demand via command line
+# PullQuester
 
-Installation
-============
+Pull request tool for generating pull requests on demand via command line
+
+# Installation
 
 Install hub via instructions in readme https://github.com/github/hub
 
 ```
 npm install -g pullquester
 ```
-
-Ensure that hub is installed and you have provided credentials to it. Hub will
-ask for credentials the first time it needs them.  http://hub.github.com
-
-In order to get hub to ask you for credentials run the following
-
-```
-hub pull-request
-```
-
 
 Configuration
 =============
@@ -33,14 +22,14 @@ to and run
 pull --init
 ```
 
-Follow the prompts to initialize the tool
+Follow the prompts to initialize the tool.
 
 Custom questions can be added by adding Inquirer question configs to the
 pullrequest.json config file.
 
 https://github.com/SBoudrias/Inquirer.js
 
-answers are added to the config in the template.
+Answers are added to the config in the template.
 
 Usage
 =====
