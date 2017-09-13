@@ -6,7 +6,7 @@ interface Branch {
     name: string;
 }
 
-interface RepoContext {
+export interface RepoContext {
     name: string;
     repo: string;
     owner: string;
@@ -18,16 +18,10 @@ export function getLocalBranches(): Promise<Array<Branch>> {
         .then((files: Array<string>) => files.map(f => ({ name: f })));
 }
 
-export function getRemote(): Promise<RepoContext> {
+export function getRemotes(): Promise<Array<RepoContext>> {
     const gitConfigFilePath = path.join('.git', 'config');
     return bindNodeCallback(fs.readFile, gitConfigFilePath, { encoding: 'utf8' })
-        .then((config: string) => {
-            const remote = parseRemotes(config).find(r => r.name === 'origin');
-            if (!remote) {
-                throw new Error('Unable to determine remote');
-            }
-            return remote;
-        });
+        .then(parseRemotes);
 }
 
 function parseRemotes(configText: string): Array<RepoContext> {
@@ -71,4 +65,3 @@ function parseRepoUrl(url: string): { repo: string, owner: string } | null {
         repo: urlMatch[2]
     };
 }
-

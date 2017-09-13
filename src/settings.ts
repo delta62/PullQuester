@@ -8,23 +8,24 @@ const GLOBAL_CONFIG_FILE = path.join(os.homedir(), '.pullquester.json');
 
 type AuthToken = string;
 
-export interface ISettings {
+export interface Settings {
     apiRoot: string;
     authToken: AuthToken;
+    userName: string;
 }
 
-export function getGlobalSettings(): Promise<ISettings | null> {
+export function getGlobalSettings(): Promise<Settings | null> {
     return bindNodeCallback(fs.readFile, GLOBAL_CONFIG_FILE, { encoding: 'utf8' })
         .then(JSON.parse);
 }
 
-export function saveGlobalSettings(settings: ISettings): Promise<ISettings> {
+function saveGlobalSettings(settings: Settings): Promise<Settings> {
     const globalSettings = JSON.stringify(settings);
     return bindNodeCallback(fs.writeFile, GLOBAL_CONFIG_FILE, globalSettings, { mode: 0o600 })
         .then(() => settings);
 }
 
-export function createGlobalSettings(): Promise<ISettings> {
+export function createGlobalSettings(): Promise<Settings> {
     console.log("It looks like you haven't set PullQuester up yet.");
     console.log('I need some stuff from you before I can start creating PRs!');
     console.log();
@@ -42,13 +43,19 @@ export function createGlobalSettings(): Promise<ISettings> {
             name: 'apiRoot',
             message: 'Where is the root of your GitHub API?',
             default: 'https://api.github.com/v3'
+        },
+        {
+            type: 'input',
+            name: 'userName',
+            message: 'What is your username?'
         }
     ];
 
     return inquirer.prompt(questions)
         .then(answers => ({
             apiRoot: answers.apiRoot,
-            authToken: answers.key
+            authToken: answers.key,
+            userName: answers.userName
         }))
         .then(saveGlobalSettings)
         .then(settings => {
