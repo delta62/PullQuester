@@ -1,5 +1,5 @@
-import Handlebars = require('handlebars');
 import fs = require('fs');
+import path = require('path');
 import { bindNodeCallback } from './promise';
 
 const PULLQUESTER_DIR = '.pullquester';
@@ -9,8 +9,8 @@ export function initTemplate(profile: string | null): Promise<void> {
         .then(() => createTemplate(profile));
 }
 
-export function generateDescription(template: string) {
-    return Handlebars.compile(template)({ });
+export function generateDescription(template: string): string {
+    return 'this is a description' + template;
 }
 
 function ensurePullQuesterDir(): Promise<void> {
@@ -20,11 +20,12 @@ function ensurePullQuesterDir(): Promise<void> {
 }
 
 function createTemplate(profile: string | null): Promise<void> {
+    const sourceFile = path.join(__dirname, 'templates', '');
     const filename = profile
         ? `pullrequest.${profile}.json`
         : 'pullrequest.json';
 
-    return bindNodeCallback(fs.readFile, '', { encoding: 'utf8' })
+    return bindNodeCallback(fs.readFile, sourceFile, { encoding: 'utf8' })
         .then(template => bindNodeCallback(fs.writeFile, filename, template))
         .then(() => undefined);
 }

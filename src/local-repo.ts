@@ -2,11 +2,11 @@ import path = require('path');
 import fs = require('fs');
 import { bindNodeCallback } from './promise';
 
-interface Branch {
+export interface Branch {
     name: string;
 }
 
-export interface RepoContext {
+export interface Remote {
     name: string;
     repo: string;
     owner: string;
@@ -18,13 +18,13 @@ export function getLocalBranches(): Promise<Array<Branch>> {
         .then((files: Array<string>) => files.map(f => ({ name: f })));
 }
 
-export function getRemotes(): Promise<Array<RepoContext>> {
+export function getRemotes(): Promise<Array<Remote>> {
     const gitConfigFilePath = path.join('.git', 'config');
     return bindNodeCallback(fs.readFile, gitConfigFilePath, { encoding: 'utf8' })
         .then(parseRemotes);
 }
 
-function parseRemotes(configText: string): Array<RepoContext> {
+function parseRemotes(configText: string): Array<Remote> {
     const matches = configText.match(/\[remote[^\]]*\](?:\n[^[]*)/gm) || [ ];
 
     return matches.reduce((acc, m) => {
@@ -54,7 +54,7 @@ function parseRemotes(configText: string): Array<RepoContext> {
         });
 
         return acc;
-    }, [ ] as Array<RepoContext>);
+    }, [ ] as Array<Remote>);
 }
 
 function parseRepoUrl(url: string): { repo: string, owner: string } | null {
